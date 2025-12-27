@@ -1,0 +1,50 @@
+<div class="mb-4">
+    <label class="form-label fw-semibold">Название события</label>
+    <input type="text"
+           name="title"
+           class="form-control form-control-lg"
+           placeholder="День рождения, Новый год, свадьба..."
+           required>
+</div>
+
+<div class="mb-4">
+    <label class="form-label fw-semibold">Дата события</label>
+    <input type="date"
+           name="event_date"
+           class="form-control form-control-lg"
+           required>
+</div>
+<hr class="my-4">
+
+<h5 class="fw-bold mb-3">🎁 Подарки</h5>
+
+<div id="gifts-container">
+    <div class="gift-item border rounded p-3 mb-3">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input type="text"
+                       name="gift_title[]"
+                       class="form-control"
+                       placeholder="Название подарка"
+                       required>
+            </div>
+            <div class="col-md-6">
+                <input type="url"
+                       name="gift_link[]"
+                       class="form-control"
+                       placeholder="Ссылка на магазин (необязательно)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button"
+        class="btn btn-outline-secondary mb-4"
+        onclick="addGift()">
+    ➕ Добавить ещё подарок
+</button>
+<div class="d-grid">
+    <button type="submit" class="btn btn-primary btn-lg">
+        🚀 Создать вишлист
+    </button>
+</div>

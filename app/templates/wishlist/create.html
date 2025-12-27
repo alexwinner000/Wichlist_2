@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Создание вишлиста{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4 p-md-5">
+
+                <h2 class="fw-bold mb-2 text-center">
+                    🎁 Новый вишлист
+                </h2>
+                <p class="text-muted text-center mb-4">
+                    Заполни информацию и добавь подарки
+                </p>
+
+                <!-- ФОРМА -->
+                <form method="post">
+                    {% include "wishlist/_form_fields.html" %}
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+function addGift() {
+    const container = document.getElementById('gifts-container');
+
+    const div = document.createElement('div');
+    div.className = 'gift-item border rounded p-3 mb-3';
+
+    div.innerHTML = `
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input type="text"
+                       name="gift_title[]"
+                       class="form-control"
+                       placeholder="Название подарка"
+                       required>
+            </div>
+            <div class="col-md-6">
+                <input type="url"
+                       name="gift_link[]"
+                       class="form-control"
+                       placeholder="Ссылка на магазин (необязательно)">
+            </div>
+        </div>
+    `;
+
+    container.appendChild(div);
+}
+</script>
+{% endblock %}

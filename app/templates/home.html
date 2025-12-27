@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Wishlist — простой способ дарить подарки{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="py-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5 px-4">
+
+            <h1 class="display-6 fw-bold mb-3">
+                Создай вишлист и получи именно те подарки, которые хочешь
+            </h1>
+
+            <p class="lead text-muted mb-4">
+                Простой сервис для дней рождения, праздников и особых событий.
+                Без регистрации и лишних шагов.
+            </p>
+
+            <a href="{{ url_for('wishlist.create_wishlist') }}"
+               class="btn btn-primary btn-lg px-5">
+                🎁 Создать вишлист
+            </a>
+
+        </div>
+    </div>
+</section>
+
+
+<hr class="my-5">
+
+<!-- HOW IT WORKS -->
+<section class="py-4">
+        <h2 class="text-center mb-4">Как это работает</h2>
+
+        <div class="row text-center g-4">
+          <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">📝</div>
+                    <h5>Создай вишлист</h5>
+                    <p class="text-muted mb-0">
+                        Укажи событие и добавь подарки
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">🔗</div>
+                    <h5>Поделись ссылкой</h5>
+                    <p class="text-muted mb-0">
+                        Отправь друзьям в мессенджерах
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">🎁</div>
+                    <h5>Бронирование</h5>
+                    <p class="text-muted mb-0">
+                        Каждый подарок бронируется один раз
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="fs-1 mb-2">😊</div>
+                    <h5>Без повторов</h5>
+                    <p class="text-muted mb-0">
+                        Никаких одинаковых подарков
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<hr class="my-5">
+
+<!-- ADVANTAGES -->
+<section class="py-4">
+    <h2 class="text-center mb-4">Почему это удобно</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <ul class="list-group list-group-flush fs-5">
+                <li class="list-group-item">✅ Без регистрации</li>
+                <li class="list-group-item">✅ Бесплатно</li>
+                <li class="list-group-item">✅ Работает по одной ссылке</li>
+                <li class="list-group-item">✅ Современно и просто</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<hr class="my-5">
+
+<!-- FINAL CTA -->
+<section class="text-center py-5">
+    <h3 class="fw-bold mb-2">Готов сделать идеальный праздник?</h3>
+    <p class="text-muted mb-4">
+        Создание вишлиста займёт меньше минуты
+    </p>
+
+    <a href="{{ url_for('wishlist.create_wishlist') }}"
+       class="btn btn-success btn-lg px-5">
+        🚀 Создать вишлист
+    </a>
+</section>
+
+
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}{{ wishlist.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Заголовок -->
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">{{ wishlist.title }}</h1>
+        <p class="text-muted mb-1">Дата события: {{ wishlist.event_date.strftime('%d.%m.%Y') }}</p>
+        <p>До события осталось: <span id="countdown" class="fw-semibold fs-5"></span></p>
+    </div>
+
+    <!-- Подарки -->
+    <div class="card shadow-sm border-0 p-3">
+        <h4 class="fw-bold mb-3">🎁 Подарки</h4>
+        <div class="gift-list">
+            {% for gift in wishlist.gifts %}
+            <div class="gift-card {% if gift.is_reserved %}reserved{% else %}available{% endif %}" id="gift-{{ gift.id }}">
+                <h6 class="fw-semibold">{{ gift.title }}</h6>
+
+                {% if gift.link %}
+                <a href="{{ gift.link }}" target="_blank" class="btn btn-sm btn-outline-primary mb-2 w-100">
+                    <i class="bi bi-cart me-1"></i> Перейти в магазин
+                </a>
+                {% endif %}
+
+                {% if not gift.is_reserved %}
+                <button class="btn btn-sm btn-success w-100 reserve-btn"
+                        data-gift-id="{{ gift.id }}"
+                        data-gift-title="{{ gift.title }}">
+                    <i class="bi bi-check-circle me-1"></i> Забронировать
+                </button>
+                {% else %}
+                <span class="badge bg-danger w-100 d-block mt-2">
+                    Забронирован: {{ gift.reserved_name }}
+                </span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="reserveModal" tabindex="-1" aria-labelledby="reserveModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form id="reserveForm">
+          <div class="modal-header">
+            <h5 class="modal-title" id="reserveModalLabel">Забронировать подарок</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+              <input type="hidden" name="gift_id" id="modalGiftId">
+              <p>Вы бронируете: <strong id="modalGiftTitle"></strong></p>
+              <input type="text" name="reserved_name" class="form-control" placeholder="Ваше имя" required>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success w-100">Забронировать</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% block scripts %}
+<script>
+// ===== Таймер обратного отсчёта =====
+function updateCountdown() {
+    const eventDate = new Date("{{ wishlist.event_date.isoformat() }}T00:00:00");
+    const now = new Date();
+    const diff = eventDate - now;
+    const countdownEl = document.getElementById('countdown');
+
+    if(diff <= 0){
+        countdownEl.innerText = "Событие наступило!";
+        clearInterval(timer);
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownEl.innerText = `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+}
+const timer = setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// ===== Модальное бронирование подарка =====
+const reserveModal = document.getElementById('reserveModal');
+const reserveForm = document.getElementById('reserveForm');
+let currentGiftId = null;
+
+if(reserveModal && reserveForm){
+    // Открытие модального окна при клике на кнопку бронирования
+    document.querySelectorAll('.reserve-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            currentGiftId = button.getAttribute('data-gift-id');
+            document.getElementById('modalGiftId').value = currentGiftId;
+            document.getElementById('modalGiftTitle').innerText = button.getAttribute('data-gift-title');
+            new bootstrap.Modal(reserveModal).show();
+        });
+    });
+
+    // AJAX отправка формы бронирования
+    reserveForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        const formData = new FormData(reserveForm);
+
+        fetch("{{ url_for('wishlist.detail', slug=wishlist.slug) }}", {
+            method: "POST",
+            body: formData,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                const giftCard = document.getElementById(`gift-${currentGiftId}`);
+                giftCard.classList.remove('available');
+                giftCard.classList.add('reserved');
+                giftCard.innerHTML = `
+                    <h6 class="fw-semibold">${data.title}</h6>
+                    ${data.link ? `<a href="${data.link}" target="_blank" class="btn btn-sm btn-outline-primary mb-2 w-100"><i class="bi bi-cart me-1"></i> Перейти в магазин</a>` : ''}
+                    <span class="badge bg-danger w-100 d-block mt-2">Забронирован: ${data.reserved_name}</span>
+                `;
+
+                // Анимация успеха
+                giftCard.animate([
+                    { transform: 'scale(1.0)', backgroundColor: '#e6f9e6' },
+                    { transform: 'scale(1.05)', backgroundColor: '#d4ffd4' },
+                    { transform: 'scale(1.0)', backgroundColor: '#ffe6e6' }
+                ], {
+                    duration: 800,
+                    easing: 'ease-out'
+                });
+
+                bootstrap.Modal.getInstance(reserveModal).hide();
+            } else {
+                alert(data.message || 'Ошибка бронирования');
+            }
+        });
+    });
+}
+</script>
+{% endblock %}
+
+<style>
+.gift-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+.gift-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 1rem;
+    width: 220px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.gift-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+.gift-card.available {
+    border-left: 5px solid #28a745;
+    background-color: #e6f9e6;
+}
+.gift-card.reserved {
+    border-left: 5px solid #dc3545;
+    background-color: #ffe6e6;
+    opacity: 0.9;
+}
+.gift-card button {
+    width: 100%;
+}
+</style>
+{% endblock %}
+
