@@ -1,5 +1,5 @@
 from flask import Flask
-from config import DevelopmentConfig
+from app.config import DevelopmentConfig
 from .extensions import db, migrate 
 
 
@@ -11,7 +11,7 @@ def create_app(config_class=DevelopmentConfig):
     migrate.init_app(app,db)
 
     from . import models
-    _ = models  # чтобы Pylance не ругался на "unused import"
+ #   _ = models  # чтобы Pylance не ругался на "unused import"
 
     from .wishlist import wishlist
     app.register_blueprint(wishlist)
