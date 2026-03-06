@@ -1,20 +1,26 @@
 from flask import Flask
-from app.config import DevelopmentConfig
-from .extensions import db, migrate 
+import os
+
+from app.config import DevelopmentConfig, ProductionConfig
+from .extensions import db, migrate
 
 
-def create_app(config_class=DevelopmentConfig):
-    app = Flask (__name__)
-    app.config.from_object(config_class)
+def create_app():
+
+    app = Flask(__name__)
+
+    if os.environ.get("FLASK_ENV") == "production":
+        app.config.from_object(ProductionConfig)
+    else:
+        app.config.from_object(DevelopmentConfig)
 
     db.init_app(app)
-    migrate.init_app(app,db)
+    migrate.init_app(app, db)
 
     from . import models
- #   _ = models  # чтобы Pylance не ругался на "unused import"
+    _ = models
 
     from .wishlist import wishlist
     app.register_blueprint(wishlist)
 
     return app
-

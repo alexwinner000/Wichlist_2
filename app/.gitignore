@@ -1,5 +1,25 @@
-venv/
+# Python
 __pycache__/
 *.pyc
-instance/
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
 .env
+
+# Flask
+instance/
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# migrations cache
+migrations/__pycache__
+
+# database
+*.db
